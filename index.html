@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint nuovo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="top-cont">
+        <img src="top.png" ondragstart="return false">
+        <input type="color" id="colore">
+        <input type="button" id="pennello" class="strumento" alt="P">
+        <input type="button" id="riempi" class="strumento" alt="R">
+        <input type="button" id="matita" class="strumento" alt="M">
+        <input type="button" id="gomma" class="strumento" alt="G">
+        <input type="button" id="testo" class="strumento" alt="T">
+
+        <!-- Colori -->
+        <div id="color-container">
+            <div id="cc-top-row" class="cc-row">
+                <input type="button" id="bottCol0" class="bottoniColori" style="background-color:#000000">
+                <input type="button" id="bottCol1" class="bottoniColori" style="background-color:#7f7f7f">
+                <input type="button" id="bottCol2" class="bottoniColori" style="background-color:#880015">
+                <input type="button" id="bottCol3" class="bottoniColori" style="background-color:#ed1c24">
+                <input type="button" id="bottCol4" class="bottoniColori" style="background-color:#ff7f27">
+                <input type="button" id="bottCol5" class="bottoniColori" style="background-color:#fff200">
+                <input type="button" id="bottCol6" class="bottoniColori" style="background-color:#22b14c">
+                <input type="button" id="bottCol7" class="bottoniColori" style="background-color:#00a2e8">
+                <input type="button" id="bottCol8" class="bottoniColori" style="background-color:#3f48cc">
+                <input type="button" id="bottCol9" class="bottoniColori" style="background-color:#a349a4">
+            </div>
+            <div id="cc-bot-row" class="cc-row">
+                <input type="button" id="bottCol10" class="bottoniColori" style="background-color:#ffffff">
+                <input type="button" id="bottCol11" class="bottoniColori" style="background-color:#c3c3c3">
+                <input type="button" id="bottCol12" class="bottoniColori" style="background-color:#b97a57">
+                <input type="button" id="bottCol13" class="bottoniColori" style="background-color:#ffaec9">
+                <input type="button" id="bottCol14" class="bottoniColori" style="background-color:#ffc90e">
+                <input type="button" id="bottCol15" class="bottoniColori" style="background-color:#efe4b0">
+                <input type="button" id="bottCol16" class="bottoniColori" style="background-color:#b5e61d">
+                <input type="button" id="bottCol17" class="bottoniColori" style="background-color:#99d9ea">
+                <input type="button" id="bottCol18" class="bottoniColori" style="background-color:#7092be">
+                <input type="button" id="bottCol19" class="bottoniColori" style="background-color:#c8bfe7">
+            </div>
+        </div>
+        <!-- Fine colori -->
+
+
+    </div>
+    <canvas id="canvas" onselectstart="return false"></canvas>
+    <div style="display:none; ">
+        <!-- Pennelli -->
+        <img id="puntino" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=">
+        <img id="rosso" src="red.png">
+        <img id="pixel" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAANSURBVBhXY2BgYPgPAAEEAQBwIGULAAAAAElFTkSuQmCC">
+    </div>
+</body>
+
+<script src="script.js" defer></script>
+
+</html>

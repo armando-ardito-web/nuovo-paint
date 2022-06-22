@@ -1,0 +1,100 @@
+html,
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    background-color: #f5f6f7;
+}
+
+.strumento {
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px solid #dcdcdd;
+}
+
+#colore {
+    position: absolute;
+    top: 7px;
+    left: 857px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #808080;
+}
+
+#color-container {
+    display: flex;
+    width: 271px;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 5px;
+    left: 953px;
+}
+
+.cc-row {
+    display: flex;
+    margin-bottom: 2px;
+}
+
+.bottoniColori {
+    border: 1px solid #a0a0a0;
+    margin-right: 2px;
+    width: 25px;
+    height: 25px;
+}
+
+#pennello {
+    position: absolute;
+    top: 12px;
+    left: 419px;
+    background-color: #c9e0f7;
+    background-image: url('strumenti/pennello.png');
+}
+
+#riempi {
+    position: absolute;
+    top: 10px;
+    left: 341px;
+    background-image: url('strumenti/riempi.png');
+}
+
+#matita {
+    position: absolute;
+    top: 10px;
+    left: 311px;
+    background-image: url('strumenti/matita.png');
+}
+
+#gomma {
+    position: absolute;
+    top: 44px;
+    left: 311px;
+    background-image: url('strumenti/gomma.png');
+}
+
+#testo {
+    position: absolute;
+    top: 44px;
+    left: 341px;
+    background-image: url('strumenti/testo.png');
+}
+
+body {
+    background-color: #ced8e7;
+}
+
+#top-cont {
+    width: 100%;
+    background-color: #f5f6f7;
+    font-weight: bold;
+}
+
+canvas {
+    margin-left: 5px;
+    margin-top: 5px;
+    cursor: url('cursori/croce.png') 7 7, auto;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
