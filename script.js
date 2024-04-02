@@ -38,6 +38,7 @@ window.onload = function() {
 
     canvas.addEventListener("mousemove", update); //Listener per la posizione del cursore dentro il canvas
 
+
     //Listener nei bottoni degli strumenti
     pennello.addEventListener("click", () => seleziona("pennello"));
     riempi.addEventListener("click", () => seleziona("riempi"));
@@ -108,6 +109,40 @@ window.onload = function() {
     }
 
 
+
+
+    let bufferFrame = [];  // Buffer per salvare gli stati del canvas
+    const maxBufferLength = 10;  // Massimo numero di stati da salvare
+    
+    
+
+
+    
+
+
+
+/*
+    //salva ultimo frame
+    function salvaUltimoFrame(){
+        ultimoFrame=(canvas.toDataURL());
+    }
+
+    //annulla
+    function annulla(){
+        var img = new Image;
+        img.src = ultimoFrame;
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+        };
+    }
+
+*/
+
+
+
+
+
+
     //cliccato?
     let cliccato = false;
     window.addEventListener("mousedown", () => {
@@ -116,7 +151,50 @@ window.onload = function() {
     window.addEventListener("mouseup", () => {
         cliccato = false;
         lastPos = []; //se hai scliccato, resetta l'ultima posizione
+        
     });
+
+    
+
+    canvas.addEventListener("mousedown",()=>{
+
+        salvaUltimoFrame();
+    });
+
+
+    
+    function salvaUltimoFrame() {
+        const currentState = canvas.toDataURL();
+        bufferFrame.push(currentState);
+        console.log('Frame salvati:', bufferFrame.length);
+    }
+    
+    function annulla() {
+        if (bufferFrame.length >= 1) {
+            // Ottiene l'ultimo frame senza rimuoverlo per mostrare lo stato corrente
+            const statoPrecedente = bufferFrame[bufferFrame.length-1];
+    
+            var img = new Image();
+            img.src = statoPrecedente;
+            img.onload = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                
+                // Ora che abbiamo mostrato lo stato precedente, possiamo rimuovere l'ultimo frame
+                bufferFrame.pop();
+            };
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     //ottieni posizione mouse
@@ -516,6 +594,20 @@ window.onload = function() {
 
 
 // Il RESTO
+
+
+    document.addEventListener('keydown', function(event) {
+        // Controlla se il tasto premuto è 'Z' (key code 90) e se il tasto CTRL è attivo
+        if (event.ctrlKey && event.key === 'z') {
+            event.preventDefault(); // Previene l'azione di default di CTRL+Z
+            
+            // Inserisci qui il codice che vuoi eseguire quando viene premuto CTRL+Z
+            annulla()
+        }
+    });
+
+
+
     window.onbeforeunload = function() {
         if(modificato==true){
             return 'Non hai salvato, sei sicuro di voler lasciare la pagina?';
