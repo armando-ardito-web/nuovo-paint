@@ -7,21 +7,28 @@ window.onload = function() {
     ctx.canvas.height = 700;
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height); //DEBUG idea di miglioramento, eseguire questo solo se non c'è nulla nel localstorage
 
     //altre variabili
     const punt = document.getElementById("puntino"); //pennello nero
     const rosso = document.getElementById("rosso"); //pennello debug
     const pixel = document.getElementById("pixel"); //matita pixel
 
+    const salvaButton = document.getElementById("salva"); //selettore colore
+    const deleteAllButton = document.getElementById("eliminaTutto");
+
+
     const colorPicker = document.getElementById("colore"); //selettore colore
     const pennello = document.getElementById("pennello"); //bottone seleziona pennello
     const riempi = document.getElementById("riempi"); //bottone seleziona riempi
     const matita = document.getElementById("matita"); //bottone seleziona matita
     const gomma = document.getElementById("gomma"); //bottone seleziona gomma
-    const testo = document.getElementById("testo"); //bottone seleziona gomma
+    const testo = document.getElementById("testo"); //bottone testo
+    const path = document.getElementById("path"); //bottone path
 
     let coloreScelto = ""; //il colore scelto
+
+    let modificato = false;
 
     const strumentiArray = ["pennello", "riempi", "matita", "gomma", "testo"]; //lo uso per girare gli strumenti e colorare le selezioni
 
@@ -37,6 +44,10 @@ window.onload = function() {
     matita.addEventListener("click", () => seleziona("matita"));
     gomma.addEventListener("click", () => seleziona("gomma"));
     testo.addEventListener("click", () => seleziona("testo"));
+    path.addEventListener("click", () => seleziona("path"));
+    salvaButton.addEventListener("click",()=> salva());
+    deleteAllButton.addEventListener("click",()=>deleteAll());
+
 
     //Tavolozza dei colori
 
@@ -64,10 +75,44 @@ window.onload = function() {
 
     //FUNZIONI
 
+    function load(){
+        var dataURL = localStorage.getItem(canvas);
+        var img = new Image;
+        img.src = dataURL;
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+        };
+    }
+
+    //carica il canvas appena parte il programma
+    load()
+
+    //salva
+    function salva(){
+        localStorage.setItem(canvas, canvas.toDataURL());
+        modificato=false;
+        alert("immagine salvata, verrà ricaricata la prossima volta")
+    }
+
+    function deleteAll(){
+        let decision=confirm("Sei sicuro che vuoi cancellare tutto? Non si torna indietro.");
+
+        if(decision==true){
+            localStorage.removeItem(canvas);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        else{
+            return
+        }
+
+    }
+
 
     //cliccato?
     let cliccato = false;
-    window.addEventListener("mousedown", () => cliccato = true);
+    window.addEventListener("mousedown", () => {
+        cliccato = true;
+    });
     window.addEventListener("mouseup", () => {
         cliccato = false;
         lastPos = []; //se hai scliccato, resetta l'ultima posizione
@@ -153,6 +198,10 @@ window.onload = function() {
                 strumentoSelezionato = "testo";
                 canvas.style.cursor = "url('cursori/testo.png') 7 15, auto";
                 break;
+            case "path":
+                strumentoSelezionato = "path";
+                canvas.style.cursor = "url('cursori/croce.png') 7 7, auto";
+                break;
 
         }
         coloraSelezStrum(strumentoSelezionato);
@@ -232,8 +281,24 @@ window.onload = function() {
                 }
                 break;
             case "testo":
+                break;
+            case "path":
 
+                /*
+                                let clickAux=0;
+                                if(cliccato)clickAux=1;
 
+                                if(clickAux){
+                                    ctx.beginPath();
+                                }
+                                */
+
+                if (cliccato) {
+                    ctx.beginPath();
+                    ctx.moveTo(lastPos.x, lastPos.y);
+                    ctx.lineTo(curPos.x, curPos.y);
+                    ctx.stroke();
+                }
                 break;
         }
 
@@ -250,6 +315,15 @@ window.onload = function() {
 
 
     function flood_fill(x, y, color) {
+        var pixelData = ctx.getImageData(x, y, 1, 1).data;
+        var currentColor = { r: pixelData[0], g: pixelData[1], b: pixelData[2], a: pixelData[3] };
+    
+        // Controlla se il colore attuale del pixel è lo stesso di quello desiderato.
+        if (currentColor.r === color.r && currentColor.g === color.g && currentColor.b === color.b && currentColor.a === color.a) {
+            console.log("Il colore del pixel è già quello desiderato. Operazione annullata.");
+            return; // Esce dalla funzione se i colori corrispondono.
+        }
+
         pixel_stack = [{ x: x, y: y }];
         pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
         var linear_cords = (y * canvas.width + x) * 4;
@@ -401,7 +475,7 @@ window.onload = function() {
                 coloreScelto = color_to_rgba(colore.value);
                 flood_fill(curPos.x, curPos.y, coloreScelto);
                 //DEBUG SCURISCE IL COLORE
-                scurisciColore();
+                //scurisciColore();
                 //selezionaNiente();
                 //canFill = false; //non puoi fillare
                 //setTimeout(() => { canFill = true; }, 1500); //se non aspetti
@@ -410,7 +484,7 @@ window.onload = function() {
             }
         }
     }
-
+/*
     function scurisciColore() { //funziona male dovrei dividere la stringa per 3 e togleire a ogni coso, se no tolgo solo al blu
         let coloreAux = "0x" + colore.value.substring(1);
         if (coloreAux.substring(4) == "00") {
@@ -418,7 +492,7 @@ window.onload = function() {
         } else
             colore.value = "#" + (coloreAux - 1).toString(16); //riporta in base 16
     }
-
+*/
     function testoFunzione() {
         let testoAux = window.prompt("Testo da inserire", "");
         ctx.font = "26px Arial"; //in futuro sarà dinamico scelglibile dall'utente
@@ -427,6 +501,7 @@ window.onload = function() {
     }
 
     function clickTools() {
+        modificato=true;
         switch (strumentoSelezionato) {
             case "riempi":
                 riempimi();
@@ -437,5 +512,20 @@ window.onload = function() {
         }
     }
 
-    canvas.addEventListener("click", clickTools);
+
+
+
+// Il RESTO
+    window.onbeforeunload = function() {
+        if(modificato==true){
+            return 'Non hai salvato, sei sicuro di voler lasciare la pagina?';
+        }
+        else{
+            return
+        }
+    };
+
+
+    canvas.addEventListener("click", clickTools
+        );
 }

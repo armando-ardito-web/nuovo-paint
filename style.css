@@ -8,12 +8,31 @@ button {
     background-color: #f5f6f7;
 }
 
+#cont-resto {
+    width: 100%;
+    height: 100%;
+}
+
 .strumento {
     width: 32px;
     height: 32px;
     background-position: center;
     background-repeat: no-repeat;
     border: 1px solid #dcdcdd;
+}
+
+#salva {
+    position: absolute;
+    top: 10px;
+    left: 250px;
+    background-image: url('strumenti/salva.png');
+}
+
+#eliminaTutto {
+    position: absolute;
+    top: 10px;
+    left: 220px;
+    background-image: url('strumenti/eliminaTutto.png');
 }
 
 #colore {
@@ -80,6 +99,13 @@ button {
     top: 44px;
     left: 341px;
     background-image: url('strumenti/testo.png');
+}
+
+#path {
+    position: absolute;
+    top: 44px;
+    left: 491px;
+    background-image: url('strumenti/path.png');
 }
 
 body {

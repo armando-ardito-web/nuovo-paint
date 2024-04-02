@@ -12,12 +12,18 @@
 <body>
     <div id="top-cont">
         <img src="top.png" ondragstart="return false">
+
+        <input type="button" id="salva" class="strumento", alt="S">
+        <input type="button" id="eliminaTutto" class="strumento", alt="X">
+
         <input type="color" id="colore">
         <input type="button" id="pennello" class="strumento" alt="P">
         <input type="button" id="riempi" class="strumento" alt="R">
         <input type="button" id="matita" class="strumento" alt="M">
         <input type="button" id="gomma" class="strumento" alt="G">
         <input type="button" id="testo" class="strumento" alt="T">
+
+        <input type="button" id="path" class="strumento" alt="O">
 
         <!-- Colori -->
         <div id="color-container">
@@ -50,13 +56,17 @@
 
 
     </div>
+
+    <span id="cont-resto">
     <canvas id="canvas" onselectstart="return false"></canvas>
+</span>
     <div style="display:none; ">
         <!-- Pennelli -->
         <img id="puntino" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=">
         <img id="rosso" src="red.png">
         <img id="pixel" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAANSURBVBhXY2BgYPgPAAEEAQBwIGULAAAAAElFTkSuQmCC">
     </div>
+
 </body>
 
 <script src="script.js" defer></script>
