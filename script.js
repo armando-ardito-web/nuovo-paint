@@ -1,67 +1,86 @@
-window.onload = function() {
-
-    //il canvas e il suo contesto (2d in questo caso)
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext('2d');
-    ctx.canvas.width = 1300;
-    ctx.canvas.height = 700;
-    ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height); //DEBUG idea di miglioramento, eseguire questo solo se non c'è nulla nel localstorage
-
-    //altre variabili
-    const punt = document.getElementById("puntino"); //pennello nero
-    const rosso = document.getElementById("rosso"); //pennello debug
-    const pixel = document.getElementById("pixel"); //matita pixel
-
-    const salvaButton = document.getElementById("salva"); //selettore colore
-    const deleteAllButton = document.getElementById("eliminaTutto");
+//window.onload = function() {}
 
 
-    const colorPicker = document.getElementById("colore"); //selettore colore
-    const pennello = document.getElementById("pennello"); //bottone seleziona pennello
-    const riempi = document.getElementById("riempi"); //bottone seleziona riempi
-    const matita = document.getElementById("matita"); //bottone seleziona matita
-    const gomma = document.getElementById("gomma"); //bottone seleziona gomma
-    const testo = document.getElementById("testo"); //bottone testo
-    const path = document.getElementById("path"); //bottone path
-
-    let coloreScelto = ""; //il colore scelto
-
-    let modificato = false;
-
-    const strumentiArray = ["pennello", "riempi", "matita", "gomma", "testo"]; //lo uso per girare gli strumenti e colorare le selezioni
-
-    let lastPos = []; //ultima posizione del mouse
-
-    let curPos = []; //posizione corrente cursore
-
-    canvas.addEventListener("mousemove", update); //Listener per la posizione del cursore dentro il canvas
 
 
-    //Listener nei bottoni degli strumenti
-    pennello.addEventListener("click", () => seleziona("pennello"));
-    riempi.addEventListener("click", () => seleziona("riempi"));
-    matita.addEventListener("click", () => seleziona("matita"));
-    gomma.addEventListener("click", () => seleziona("gomma"));
-    testo.addEventListener("click", () => seleziona("testo"));
-    path.addEventListener("click", () => seleziona("path"));
-    salvaButton.addEventListener("click",()=> salva());
-    deleteAllButton.addEventListener("click",()=>deleteAll());
+//il canvas e il suo contesto (2d in questo caso)
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext('2d');
+ctx.canvas.width = 1300;
+ctx.canvas.height = 700;
+ctx.imageSmoothingEnabled = false;
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, canvas.width, canvas.height); //DEBUG idea di miglioramento, eseguire questo solo se non c'è nulla nel localstorage
 
 
-    //Tavolozza dei colori
+//altre variabili
+const annullaButton = document.getElementById("annullaButton"); //bottone annulla
+const ripetiButton = document.getElementById("ripetiButton"); //bottone ripeti
+const salvaButton = document.getElementById("salva"); //salva
+const deleteAllButton = document.getElementById("eliminaTutto"); //elimina tutto
 
-    document.getElementById("bottCol0").addEventListener("click", () => { bottColoreSelect('#000000') });
-    document.getElementById("bottCol1").addEventListener("click", () => { bottColoreSelect('#7f7f7f') });
-    document.getElementById("bottCol2").addEventListener("click", () => { bottColoreSelect('#880015') });
-    document.getElementById("bottCol3").addEventListener("click", () => { bottColoreSelect('#ed1c24') });
-    document.getElementById("bottCol4").addEventListener("click", () => { bottColoreSelect('#ff7f27') });
-    document.getElementById("bottCol5").addEventListener("click", () => { bottColoreSelect('#fff200') });
-    document.getElementById("bottCol6").addEventListener("click", () => { bottColoreSelect('#22b14c') });
-    document.getElementById("bottCol7").addEventListener("click", () => { bottColoreSelect('#00a2e8') });
-    document.getElementById("bottCol8").addEventListener("click", () => { bottColoreSelect('#3f48cc') });
-    document.getElementById("bottCol9").addEventListener("click", () => { bottColoreSelect('#a349a4') });
+
+//strumenti
+const rosso = document.getElementById("rosso"); //pennello debug
+const punt = document.getElementById("puntino"); //pennello nero
+const pixel = document.getElementById("pixel"); //matita pixel
+const colorPicker = document.getElementById("colore"); //selettore colore
+const pennello = document.getElementById("pennello"); //bottone seleziona pennello
+const riempi = document.getElementById("riempi"); //bottone seleziona riempi
+const matita = document.getElementById("matita"); //bottone seleziona matita
+const gomma = document.getElementById("gomma"); //bottone seleziona gomma
+const testo = document.getElementById("testo"); //bottone testo
+const path = document.getElementById("path"); //bottone path
+const scegliColore = document.getElementById("scegliColore"); //bottone scegli colore
+
+let coloreScelto = ""; //il colore scelto
+
+let modificato = false;
+
+const strumentiArray = ["pennello", "riempi", "matita", "gomma", "testo"]; //lo uso per girare gli strumenti e colorare le selezioni
+
+let lastPos = []; //ultima posizione del mouse
+
+let curPos = []; //posizione corrente cursore
+
+canvas.addEventListener("mousemove", update); //Listener per la posizione del cursore dentro il canvas
+
+//strumento selezionato
+let strumentoSelezionato = "pennello";
+
+//Listener nei bottoni degli strumenti
+pennello.addEventListener("click", () => seleziona("pennello"));
+riempi.addEventListener("click", () => seleziona("riempi"));
+matita.addEventListener("click", () => seleziona("matita"));
+gomma.addEventListener("click", () => seleziona("gomma"));
+testo.addEventListener("click", () => seleziona("testo"));
+path.addEventListener("click", () => seleziona("path"));
+salvaButton.addEventListener("click",()=> salva());
+deleteAllButton.addEventListener("click",()=>deleteAll());
+scegliColore.addEventListener("click",()=> seleziona("scegliColore"));
+annullaButton.addEventListener("click",()=> annulla());
+ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
+
+
+//Tavolozza dei colori
+    const colori = ["#000000", "#7f7f7f", "#880015", "#ed1c24", "#ff7f27", "#fff200", "#22b14c", "#00a2e8", "#3f48cc", "#a349a4",
+        "#ffffff", "#c3c3c3", "#b97a57", "#ffaec9", "#ffc90e", "#efe4b0", "#b5e61d", "#99d9ea", "#7092be", "#c8bfe7"
+    ];
+
+    //ti prego cicla i .bottoniColori e assegna i colori dall'array ti prego in qualche modo
+    
+    
+
+     document.getElementById("bottCol0").addEventListener("click", () => { bottColoreSelect('#000000') });
+     document.getElementById("bottCol1").addEventListener("click", () => { bottColoreSelect('#7f7f7f') });
+     document.getElementById("bottCol2").addEventListener("click", () => { bottColoreSelect('#880015') });
+     document.getElementById("bottCol3").addEventListener("click", () => { bottColoreSelect('#ed1c24') });
+     document.getElementById("bottCol4").addEventListener("click", () => { bottColoreSelect('#ff7f27') });
+     document.getElementById("bottCol5").addEventListener("click", () => { bottColoreSelect('#fff200') });
+     document.getElementById("bottCol6").addEventListener("click", () => { bottColoreSelect('#22b14c') });
+     document.getElementById("bottCol7").addEventListener("click", () => { bottColoreSelect('#00a2e8') });
+     document.getElementById("bottCol8").addEventListener("click", () => { bottColoreSelect('#3f48cc') });
+     document.getElementById("bottCol9").addEventListener("click", () => { bottColoreSelect('#a349a4') });
     document.getElementById("bottCol10").addEventListener("click", () => { bottColoreSelect('#ffffff') });
     document.getElementById("bottCol11").addEventListener("click", () => { bottColoreSelect('#c3c3c3') });
     document.getElementById("bottCol12").addEventListener("click", () => { bottColoreSelect('#b97a57') });
@@ -109,39 +128,9 @@ window.onload = function() {
     }
 
 
-
-
     let bufferFrame = [];  // Buffer per salvare gli stati del canvas
     const maxBufferLength = 10;  // Massimo numero di stati da salvare
     
-    
-
-
-    
-
-
-
-/*
-    //salva ultimo frame
-    function salvaUltimoFrame(){
-        ultimoFrame=(canvas.toDataURL());
-    }
-
-    //annulla
-    function annulla(){
-        var img = new Image;
-        img.src = ultimoFrame;
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-        };
-    }
-
-*/
-
-
-
-
-
 
     //cliccato?
     let cliccato = false;
@@ -186,16 +175,9 @@ window.onload = function() {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
+    function ripeti() {
+        console.log("TODO: ripeti");
+    }
 
     //ottieni posizione mouse
     function getMousePos(canvas, evt) {
@@ -211,12 +193,13 @@ window.onload = function() {
     }
 
     //colora la selezione azzurra, gli altri grigini
+    //TODO: rifare usando una class con questo style e togliendo dagli altri strumenti la class
     function coloraSelezStrum(selezionato) { //tra virgolette selezionato, è una stringa che voglio
-        document.getElementById(selezionato).style.backgroundColor = "#c9e0f7";
+        document.getElementById(selezionato).classList.add("strumentoSelezionato");
         strumentiArray.forEach((e) => {
             console.log(e.localeCompare(selezionato) == 0);
             if (e.localeCompare(selezionato) != 0) {
-                document.getElementById(e).style.backgroundColor = "#f5f6f7";
+                document.getElementById(e).classList.remove("strumentoSelezionato");
                 console.log(document.getElementById(e));
             }
         });
@@ -249,8 +232,6 @@ window.onload = function() {
     }
 
 
-    //strumento selezionato?
-    let strumentoSelezionato = "pennello";
 
     function seleziona(strumento) {
         switch (strumento) {
@@ -392,7 +373,7 @@ window.onload = function() {
     //funcioni copiate
 
 
-    function flood_fill(x, y, color) {
+    function flood_fill_old(x, y, color) {
         var pixelData = ctx.getImageData(x, y, 1, 1).data;
         var currentColor = { r: pixelData[0], g: pixelData[1], b: pixelData[2], a: pixelData[3] };
     
@@ -476,6 +457,72 @@ window.onload = function() {
         ctx.putImageData(pixels, 0, 0);
     }
 
+
+    function flood_fill(x, y, color) {
+    const w = canvas.width, h = canvas.height;
+    const pixels = ctx.getImageData(0, 0, w, h);
+    const data = pixels.data;
+    const startOff = (y * w + x) << 2;
+    const sr = data[startOff], sg = data[startOff + 1], sb = data[startOff + 2];
+
+    // se rgb di partenza sono già uguali al fill, esci
+    if (sr === color.r && sg === color.g && sb === color.b) return;
+
+    const matchRGB = (off) =>
+        data[off] === sr && data[off + 1] === sg && data[off + 2] === sb;
+
+    const writeRGB = (off) => {
+        data[off] = color.r;
+        data[off + 1] = color.g;
+        data[off + 2] = color.b;
+        // non toccare data[off+3] (alpha = 255 già impostato)
+    };
+
+    const stack = [];
+    stack.push(x, y);
+
+    while (stack.length) {
+        const cy = stack.pop();
+        const cx = stack.pop();
+
+        if (cx < 0 || cx >= w || cy < 0 || cy >= h) continue;
+        let off = ((cy * w) + cx) << 2;
+        if (!matchRGB(off)) continue;
+
+        // espandi sinistra
+        let lx = cx;
+        let loff = off;
+        while (lx >= 0 && matchRGB(loff)) {
+            lx--;
+            loff -= 4;
+        }
+        lx++; loff += 4;
+
+        // espandi destra e riempi
+        let rx = lx;
+        let roff = loff;
+        while (rx < w && matchRGB(roff)) {
+            writeRGB(roff);
+
+            const upY = cy - 1;
+            if (upY >= 0) {
+                const upOff = (((upY * w) + rx) << 2);
+                if (matchRGB(upOff)) stack.push(rx, upY);
+            }
+            const downY = cy + 1;
+            if (downY < h) {
+                const downOff = (((downY * w) + rx) << 2);
+                if (matchRGB(downOff)) stack.push(rx, downY);
+            }
+
+            rx++;
+            roff += 4;
+        }
+    }
+
+    ctx.putImageData(pixels, 0, 0);
+}
+
     function is_in_pixel_stack(x, y, pixel_stack) {
         for (var i = 0; i < pixel_stack.length; i++) {
             if (pixel_stack[i].x == x && pixel_stack[i].y == y) {
@@ -552,25 +599,12 @@ window.onload = function() {
                 console.log("riempi");
                 coloreScelto = color_to_rgba(colore.value);
                 flood_fill(curPos.x, curPos.y, coloreScelto);
-                //DEBUG SCURISCE IL COLORE
-                //scurisciColore();
-                //selezionaNiente();
-                //canFill = false; //non puoi fillare
-                //setTimeout(() => { canFill = true; }, 1500); //se non aspetti
             } else {
                 console.log("Sto riempiendo il secchio di vernice...");
             }
         }
     }
-/*
-    function scurisciColore() { //funziona male dovrei dividere la stringa per 3 e togleire a ogni coso, se no tolgo solo al blu
-        let coloreAux = "0x" + colore.value.substring(1);
-        if (coloreAux.substring(4) == "00") {
-            colore.value = "#" + (coloreAux + 3).toString(16); //riporta in base 16
-        } else
-            colore.value = "#" + (coloreAux - 1).toString(16); //riporta in base 16
-    }
-*/
+    
     function testoFunzione() {
         let testoAux = window.prompt("Testo da inserire", "");
         ctx.font = "26px Arial"; //in futuro sarà dinamico scelglibile dall'utente
@@ -618,6 +652,24 @@ window.onload = function() {
     };
 
 
-    canvas.addEventListener("click", clickTools
-        );
-}
+    canvas.addEventListener("click", clickTools);
+
+    document.getElementById('scegliColore').addEventListener('click', async () => {
+  if (!window.EyeDropper) {
+    alert("Il tuo browser non supporta l'API EyeDropper");
+    return;
+  }
+  
+  const eyeDropper = new EyeDropper();
+  try {
+    const result = await eyeDropper.open();
+    colorPicker.value = result.sRGBHex;
+    bottColoreSelect(result.sRGBHex);
+    console.log("Colore scelto: " + result.sRGBHex);
+    //document.getElementById('result').textContent = "Colore scelto: " + result.sRGBHex;
+    //document.body.style.backgroundColor = result.sRGBHex;
+  } catch (err) {
+    console.log('Annullato');
+  }
+});
+

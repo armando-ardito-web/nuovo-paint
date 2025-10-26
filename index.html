@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paint nuovo</title>
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
     <div id="top-cont">
         <img src="top.png" ondragstart="return false">
 
+        <!-- #region Strumenti -->
+
+        <input type="button" id="annullaButton" class="strumento", alt="Ctrl-Z"> 
+        <input type="button" id="ripetiButton" class="strumento", alt="Ctrl-Y"> 
         <input type="button" id="salva" class="strumento", alt="S">
         <input type="button" id="eliminaTutto" class="strumento", alt="X">
 
@@ -20,12 +23,14 @@
         <input type="button" id="pennello" class="strumento" alt="P">
         <input type="button" id="riempi" class="strumento" alt="R">
         <input type="button" id="matita" class="strumento" alt="M">
-        <input type="button" id="gomma" class="strumento" alt="G">
+        <input type="button" id="gomma" class="strumento" alt="G">        
+        <input type="button" id="scegliColore" class="strumento">
         <input type="button" id="testo" class="strumento" alt="T">
 
         <input type="button" id="path" class="strumento" alt="O">
+        <!-- #endregion Fine strumenti --> 
 
-        <!-- Colori -->
+        <!-- #region Colori -->
         <div id="color-container">
             <div id="cc-top-row" class="cc-row">
                 <input type="button" id="bottCol0" class="bottoniColori" style="background-color:#000000">
@@ -52,7 +57,7 @@
                 <input type="button" id="bottCol19" class="bottoniColori" style="background-color:#c8bfe7">
             </div>
         </div>
-        <!-- Fine colori -->
+        <!-- #endregion Fine colori -->
 
 
     </div>
@@ -68,6 +73,7 @@
     </div>
 
 </body>
+
 
 <script src="script.js" defer></script>
 
