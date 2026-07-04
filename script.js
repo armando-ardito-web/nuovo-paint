@@ -20,6 +20,7 @@ const annullaButton = document.getElementById("annullaButton"); //bottone annull
 const ripetiButton = document.getElementById("ripetiButton"); //bottone ripeti
 const salvaButton = document.getElementById("salva"); //salva
 const deleteAllButton = document.getElementById("eliminaTutto"); //elimina tutto
+const downloadButton = document.getElementById("download"); //download
 
 
 //strumenti
@@ -78,6 +79,7 @@ testo.addEventListener("click", () => seleziona("testo"));
 path.addEventListener("click", () => seleziona("path"));
 salvaButton.addEventListener("click",()=> salva());
 deleteAllButton.addEventListener("click",()=>deleteAll());
+downloadButton.addEventListener("click",()=> downloadCanvas());
 scegliColore.addEventListener("click",()=> seleziona("scegliColore"));
 annullaButton.addEventListener("click",()=> annulla());
 ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
@@ -133,6 +135,22 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
         localStorage.setItem(canvas, canvas.toDataURL());
         setModificato(false);
         alert("immagine salvata, verrà ricaricata la prossima volta")
+    }
+
+    function downloadCanvas() {
+        const now = new Date();
+        const timestamp = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0"),
+            String(now.getHours()).padStart(2, "0"),
+            String(now.getMinutes()).padStart(2, "0"),
+            String(now.getSeconds()).padStart(2, "0")
+        ].join("");
+        const link = document.createElement("a");
+        link.download = `immagine-${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
     }
 
     function deleteAll(){
@@ -762,6 +780,10 @@ function drawMatitaHandler(){
             
             // Inserisci qui il codice che vuoi eseguire quando viene premuto CTRL+Z
             annulla()
+        }
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();
+            downloadCanvas();
         }
     });
 

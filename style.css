@@ -62,10 +62,17 @@ button {
     background-image: url('strumenti/eliminaTutto.png');
 }
 
+#download {
+    position: absolute;
+    top: 41px;
+    left: 250px;
+    background-image: url('strumenti/download.png');
+}
+
 #pennello {
     position: absolute;
-    top: 12px;
-    left: 419px;
+    top: 11px;
+    left: 418px;
     background-color: #c9e0f7;
     background-image: url('strumenti/pennello.png');
 }
