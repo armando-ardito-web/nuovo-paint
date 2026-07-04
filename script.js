@@ -203,9 +203,9 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
 
     //funzione per aggiornare gli strumenti dopo la selezione del colore
     function updateTools(){
-        punt.src = colorize(pennelloImgData, colorPicker.value, 1.0, punt); //qua colorizzo il pennello
-        pixel.src = colorize(pixelImgData, colorPicker.value, 1.0, pixel); //qua colorizzo la matita
-        gomma.src = colorize(gommaImgData, colorPicker2.value, 1.0, gomma); //qua colorizzo la gomma
+        punt.src = colorize(pennelloImgData, colorPicker.value, 1.0); //qua colorizzo il pennello
+        pixel.src = colorize(pixelImgData, colorPicker.value, 1.0); //qua colorizzo la matita
+        gomma.src = colorize(gommaImgData, colorPicker2.value, 1.0); //qua colorizzo la gomma
     }
 
     //funzione colorizza immagine
@@ -220,7 +220,7 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
    //DEVO FARLO ASINCRONO
    //DEVO FARLO ASINCRONO
    
-    function colorize(dataUrlBase64, hexColor, intensity = 1.0, imgElement=null) {
+    function colorize(dataUrlBase64, hexColor, intensity = 1.0) {
   if (typeof dataUrlBase64 !== "string" || !dataUrlBase64.startsWith("data:")) {
     throw new Error("dataUrlBase64 must be a data URL string (base64)");
   }
@@ -241,17 +241,11 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
   const fgG = color.g * intensity;
   const fgB = color.b * intensity;
 
-  if(!imgElement) {
-    const img = new Image();
+  const img = new Image();
   img.crossOrigin = "Anonymous";
   img.src = dataUrlBase64;
   //Faccio caricare sync l'immagine
   img.decoding = "sync";
-  }
-  
-  const img = imgElement;   
-
-
 
   if (!img.complete || img.naturalWidth === 0) {
     throw new Error("Image data URL not immediately available synchronously. Use an async variant or ensure data URL is decoded/cached.");
