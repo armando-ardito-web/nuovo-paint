@@ -69,6 +69,7 @@ canvas.addEventListener("mousemove", update); //Listener per la posizione del cu
 
 //strumento selezionato
 let strumentoSelezionato = "pennello";
+coloraSelezStrum(strumentoSelezionato);
 
 //Listener nei bottoni degli strumenti
 pennello.addEventListener("click", () => seleziona("pennello"));
@@ -158,7 +159,9 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
 
         if(decision==true){
             localStorage.removeItem(canvas);
+            ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            setModificato(true);
         }
         else{
             return
