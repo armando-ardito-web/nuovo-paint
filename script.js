@@ -1,8 +1,5 @@
 //window.onload = function() {}
 
-
-
-
 //il canvas e il suo contesto (2d in questo caso)
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
@@ -11,6 +8,11 @@ ctx.canvas.height = 700;
 ctx.imageSmoothingEnabled = false;
 ctx.fillStyle = "white";
 ctx.fillRect(0, 0, canvas.width, canvas.height); //DEBUG idea di miglioramento, eseguire questo solo se non c'è nulla nel localstorage
+
+//pennelli immagini
+const pennelloImgData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=";
+const pixelImgData ="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAANSURBVBhXY2BgYPgPAAEEAQBwIGULAAAAAElFTkSuQmCC";
+const gommaImgData ="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQYlWNkYGD4z4AHMOGTHD4KAAxTAQ+OWA1IAAAAAElFTkSuQmCC";
 
 
 //altre variabili
@@ -21,10 +23,16 @@ const deleteAllButton = document.getElementById("eliminaTutto"); //elimina tutto
 
 
 //strumenti
-const rosso = document.getElementById("rosso"); //pennello debug
-const punt = document.getElementById("puntino"); //pennello nero
-const pixel = document.getElementById("pixel"); //matita pixel
 const colorPicker = document.getElementById("colore"); //selettore colore
+const colorPicker2 = document.getElementById("colore2"); //selettore colore secondario
+colorPicker2.value="#ffffff";
+
+//immagini da spiattellare sul canvas proprio l'immagine del pallino che produce lo strumento 
+const rosso = document.getElementById("rosso"); //pennello debug
+const pixel = document.getElementById("pixel"); //matita pixel
+const punt = document.getElementById("puntino"); //pennello
+const gommaImg = document.getElementById("gommaImg"); //immagine gomma
+
 const pennello = document.getElementById("pennello"); //bottone seleziona pennello
 const riempi = document.getElementById("riempi"); //bottone seleziona riempi
 const matita = document.getElementById("matita"); //bottone seleziona matita
@@ -188,9 +196,91 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
         }
     }
 
-    function bottColoreSelect(colore) { //scegli il colore con il bottone
+    function bottColoreSelect(colore) { //scegli il colore con il bottone + associa al puntino //AA WARNING (da fare altri strumenti, da gestire meglio)
         colorPicker.value = colore;
+        updateTools();
     }
+
+    //funzione per aggiornare gli strumenti dopo la selezione del colore
+    function updateTools(){
+        punt.src = colorize(pennelloImgData, colorPicker.value, 1.0, punt); //qua colorizzo il pennello
+        pixel.src = colorize(pixelImgData, colorPicker.value, 1.0, pixel); //qua colorizzo la matita
+        gomma.src = colorize(gommaImgData, colorPicker2.value, 1.0, gomma); //qua colorizzo la gomma
+    }
+
+    //funzione colorizza immagine
+    //gli dai immagine in base64 e ti sputa fuori l'immagine colorizzata per cambiare colore agli strumenti tipo
+   //COPSI NON VA BENE
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   //DEVO FARLO ASINCRONO
+   
+    function colorize(dataUrlBase64, hexColor, intensity = 1.0, imgElement=null) {
+  if (typeof dataUrlBase64 !== "string" || !dataUrlBase64.startsWith("data:")) {
+    throw new Error("dataUrlBase64 must be a data URL string (base64)");
+  }
+  function parseHex(hex) {
+    hex = hex.replace(/^#/, "");
+    if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+    if (hex.length !== 6) throw new Error("hexColor must be 3 or 6 hex digits");
+    return {
+      r: parseInt(hex.slice(0,2), 16),
+      g: parseInt(hex.slice(2,4), 16),
+      b: parseInt(hex.slice(4,6), 16)
+    };
+  }
+  function clampByte(v){ return v < 0 ? 0 : (v > 255 ? 255 : (v|0)); }
+
+  const color = parseHex(hexColor);
+  const fgR = color.r * intensity;
+  const fgG = color.g * intensity;
+  const fgB = color.b * intensity;
+
+  if(!imgElement) {
+    const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.src = dataUrlBase64;
+  //Faccio caricare sync l'immagine
+  img.decoding = "sync";
+  }
+  
+  const img = imgElement;   
+
+
+
+  if (!img.complete || img.naturalWidth === 0) {
+    throw new Error("Image data URL not immediately available synchronously. Use an async variant or ensure data URL is decoded/cached.");
+  }
+
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    // background pixel channels
+    const br = data[i], bg = data[i+1], bb = data[i+2];
+    // add per-channel (Linear Dodge)
+    data[i]   = clampByte(br + fgR);
+    data[i+1] = clampByte(bg + fgG);
+    data[i+2] = clampByte(bb + fgB);
+    // preserve alpha
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL("image/png");
+}
+
 
     //colora la selezione azzurra, gli altri grigini
     //TODO: rifare usando una class con questo style e togliendo dagli altri strumenti la class
@@ -242,8 +332,6 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
             case "riempi":
                 strumentoSelezionato = "riempi";
                 canvas.style.cursor = "url('cursori/secchiello.png') 0 14, auto";
-                //devo ASSOLUTAMENTE DI CORSA fare una funzione per colorare l'ultimo strumento che era selelzionato, 
-                //probabilmente tenendone traccia in una variabile
                 break;
             case "matita":
                 strumentoSelezionato = "matita";
@@ -266,79 +354,54 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
         coloraSelezStrum(strumentoSelezionato);
     }
 
+function drawHandler(strumentoImmagineCoso){ //invece di riscrivere sta cosa mille volte la rendo una fuinzione SPERANDO che funziona
+    if (cliccato) {
+                    if (!lastPos) {
+                        ctx.drawImage(strumentoImmagineCoso, curPos.x, curPos.y);
+                    } else {
+                        linea(strumentoImmagineCoso, lastPos.x, lastPos.y, curPos.x, curPos.y);
+                        /*
+                                        ctx.moveTo(lastPos.x, lastPos.y);
+                                        ctx.lineTo(pos.x, pos.y);
+                                        ctx.stroke();
+                        */
+                    }
 
+                    //ultima posizione
+                    lastPos.x = curPos.x;
+                    lastPos.y = curPos.y;
+
+
+                } else {
+                    //let pos = getMousePos(canvas, evt);
+                    ctx.moveTo(curPos.x, curPos.y);
+                }
+}
 
     function update(evt) {
 
         switch (strumentoSelezionato) {
 
-            case "pennello":
-                if (cliccato) {
-                    if (!lastPos) {
-                        ctx.drawImage(punt, curPos.x, curPos.y);
-                    } else {
-                        linea(punt, lastPos.x, lastPos.y, curPos.x, curPos.y);
-                        /*
-                                        ctx.moveTo(lastPos.x, lastPos.y);
-                                        ctx.lineTo(pos.x, pos.y);
-                                        ctx.stroke();
-                        */
-                    }
-
-                    //ultima posizione
-                    lastPos.x = curPos.x;
-                    lastPos.y = curPos.y;
-
-
-                } else {
-                    //let pos = getMousePos(canvas, evt);
-                    ctx.moveTo(curPos.x, curPos.y);
-                }
-                break;
-
             case "riempi":
-                /* if (cliccato) {
-                     floodFill(ctx, lastPos.x, lastPos.y, [255, 0, 0, 255]);
-                 }*/
+
                 break;
+
+            case "pennello":
+
+            drawHandler(punt);
+                  
+                break;
+
 
             case "matita":
-                if (cliccato) {
-                    if (!lastPos) {
-                        ctx.drawImage(pixel, curPos.x, curPos.y);
-                    } else {
-                        linea(pixel, lastPos.x, lastPos.y, curPos.x, curPos.y);
-                        /*
-                                        ctx.moveTo(lastPos.x, lastPos.y);
-                                        ctx.lineTo(pos.x, pos.y);
-                                        ctx.stroke();
-                        */
-                    }
-
-                    //ultima posizione
-                    lastPos.x = curPos.x;
-                    lastPos.y = curPos.y;
-
-
-                } else {
-                    //let pos = getMousePos(canvas, evt);
-                    ctx.moveTo(curPos.x, curPos.y);
-                }
+            drawHandler(pixel);
                 break;
 
-            case "gomma":
-                ctx.lineWidth = 5;
-                if (cliccato) {
-                    ctx.moveTo(lastPos.x, lastPos.y);
-                    ctx.lineTo(curPos.x, curPos.y);
-                    ctx.strokeStyle = "#ffffff";
-                    ctx.lineWidth = 8;
-                    ctx.stroke();
+            case "gomma": //WARNING usare lo stesso sistema degli 
+            drawHandler(gommaImg);
 
-                } else {
-                    ctx.moveTo(curPos.x, curPos.y);
-                }
-                break;
+               break;
+
             case "testo":
                 break;
             case "path":

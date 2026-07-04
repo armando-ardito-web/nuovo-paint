@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <title>Paint nuovo</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Prefetch pennello puntino -->
+    <link rel="prefetch" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=">
+
+    <!-- Prefetch pixel cioè la matita -->
+    <link rel="prefetch" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAANSURBVBhXY2BgYPgPAAEEAQBwIGULAAAAAElFTkSuQmCC">
+
+    <!-- Prefetch gomma -->
+    <link rel="prefetch" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQYlWNkYGD4z4AHMOGTHD4KAAxTAQ+OWA1IAAAAAElFTkSuQmCC">
+
+    
+
 
 </head>
 
@@ -19,7 +30,10 @@
         <input type="button" id="salva" class="strumento", alt="S">
         <input type="button" id="eliminaTutto" class="strumento", alt="X">
 
-        <input type="color" id="colore">
+        <input type="color" id="colore" onchange="updateTools();">
+        <input type="color" id="colore2" onchange="updateTools();">
+
+
         <input type="button" id="pennello" class="strumento" alt="P">
         <input type="button" id="riempi" class="strumento" alt="R">
         <input type="button" id="matita" class="strumento" alt="M">
@@ -67,9 +81,11 @@
 </span>
     <div style="display:none; ">
         <!-- Pennelli -->
-        <img id="puntino" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=">
+        <img id="puntino" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAJklEQVQImRXJsQ0AIAgAsBJec+BEEw51MhqGTk0UGgEHb8xcLOwPXWYFufSGyawAAAAASUVORK5CYII=" >
         <img id="rosso" src="red.png">
         <img id="pixel" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAANSURBVBhXY2BgYPgPAAEEAQBwIGULAAAAAElFTkSuQmCC">
+        <img id="gommaImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQYlWNkYGD4z4AHMOGTHD4KAAxTAQ+OWA1IAAAAAElFTkSuQmCC">
+    
     </div>
 
 </body>
