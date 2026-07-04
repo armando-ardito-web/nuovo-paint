@@ -25,6 +25,7 @@ const deleteAllButton = document.getElementById("eliminaTutto"); //elimina tutto
 //strumenti
 const colorPicker = document.getElementById("colore"); //selettore colore
 const colorPicker2 = document.getElementById("colore2"); //selettore colore secondario
+colorPicker.value="#000000";
 colorPicker2.value="#ffffff";
 
 //immagini da spiattellare sul canvas proprio l'immagine del pallino che produce lo strumento 
@@ -44,6 +45,18 @@ const scegliColore = document.getElementById("scegliColore"); //bottone scegli c
 let coloreScelto = ""; //il colore scelto
 
 let modificato = false;
+const titoloBase = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname) ? "(local) Paint nuovo" : "Paint nuovo";
+
+function aggiornaTitolo() {
+    document.title = modificato ? `[*] ${titoloBase}` : titoloBase;
+}
+
+function setModificato(valore) {
+    modificato = valore;
+    aggiornaTitolo();
+}
+
+aggiornaTitolo();
 
 const strumentiArray = ["pennello", "riempi", "matita", "gomma", "testo"]; //lo uso per girare gli strumenti e colorare le selezioni
 
@@ -118,7 +131,7 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
     //salva
     function salva(){
         localStorage.setItem(canvas, canvas.toDataURL());
-        modificato=false;
+        setModificato(false);
         alert("immagine salvata, verrà ricaricata la prossima volta")
     }
 
@@ -153,9 +166,12 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
 
     
 
-    canvas.addEventListener("mousedown",()=>{
-
+    canvas.addEventListener("mousedown",(evt)=>{
+        cliccato = true;
+        curPos.x = getMousePos(canvas, evt).x;
+        curPos.y = getMousePos(canvas, evt).y;
         salvaUltimoFrame();
+        update(evt);
     });
 
 
@@ -176,6 +192,7 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
             img.onload = function () {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
+                setModificato(true);
                 
                 // Ora che abbiamo mostrato lo stato precedente, possiamo rimuovere l'ultimo frame
                 bufferFrame.pop();
@@ -205,7 +222,7 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
     function updateTools(){
         punt.src = colorize(pennelloImgData, colorPicker.value, 1.0); //qua colorizzo il pennello
         pixel.src = colorize(pixelImgData, colorPicker.value, 1.0); //qua colorizzo la matita
-        gomma.src = colorize(gommaImgData, colorPicker2.value, 1.0); //qua colorizzo la gomma
+        gommaImg.src = colorize(gommaImgData, colorPicker2.value, 1.0); //qua colorizzo la gomma
     }
 
     //funzione colorizza immagine
@@ -262,18 +279,17 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
   const data = imageData.data;
 
   for (let i = 0; i < data.length; i += 4) {
-    // background pixel channels
-    const br = data[i], bg = data[i+1], bb = data[i+2];
-    // add per-channel (Linear Dodge)
-    data[i]   = clampByte(br + fgR);
-    data[i+1] = clampByte(bg + fgG);
-    data[i+2] = clampByte(bb + fgB);
+    data[i] = clampByte(fgR);
+    data[i + 1] = clampByte(fgG);
+    data[i + 2] = clampByte(fgB);
     // preserve alpha
   }
 
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL("image/png");
 }
+
+window.addEventListener("load", updateTools);
 
 
     //colora la selezione azzurra, gli altri grigini
@@ -291,7 +307,7 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
     }
 
     //disegna una linea con una bruscia selezionata
-    function linea(brush, oldX, oldY, newX, newY) {
+    function linea(brush, oldX, oldY, newX, newY, offsetX = 0, offsetY = 0) {
 
         let distX = Math.abs(newX) - Math.abs(oldX); //cateto 1
 
@@ -300,6 +316,11 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
         let diag = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)); //diagonale
 
         let quanti = Math.ceil(diag); //approssima per eccesso all'INT più vicino
+
+        if (!Number.isFinite(diag) || diag === 0) {
+            ctx.drawImage(brush, newX - offsetX, newY - offsetY);
+            return;
+        }
 
         let pezzettino = diag / quanti;
 
@@ -310,8 +331,35 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
             let ratioY = distY / diag;
             let auxX = distX - (pezzettino * ratioX * i) + oldX;
             let auxY = distY - (pezzettino * ratioY * i) + oldY;
-            ctx.drawImage(brush, auxX, auxY);
+            ctx.drawImage(brush, auxX - offsetX, auxY - offsetY);
 
+        }
+    }
+
+    function disegnaPixelMatita(x, y) {
+        ctx.fillStyle = colorPicker.value;
+        ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
+    }
+
+    function lineaMatita(oldX, oldY, newX, newY) {
+        let distX = Math.abs(newX) - Math.abs(oldX);
+        let distY = Math.abs(newY) - Math.abs(oldY);
+        let diag = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+
+        if (!Number.isFinite(diag) || diag === 0) {
+            disegnaPixelMatita(newX, newY);
+            return;
+        }
+
+        let quanti = Math.ceil(diag);
+        let pezzettino = diag / quanti;
+
+        for (let i = 0; i <= quanti; i++) {
+            let ratioX = distX / diag;
+            let ratioY = distY / diag;
+            let auxX = distX - (pezzettino * ratioX * i) + oldX;
+            let auxY = distY - (pezzettino * ratioY * i) + oldY;
+            disegnaPixelMatita(auxX, auxY);
         }
     }
 
@@ -348,12 +396,15 @@ ripetiButton.addEventListener("click",()=> console.log("TODO: ripeti"));
         coloraSelezStrum(strumentoSelezionato);
     }
 
-function drawHandler(strumentoImmagineCoso){ //invece di riscrivere sta cosa mille volte la rendo una fuinzione SPERANDO che funziona
+function drawHandler(strumentoImmagineCoso, centrato = false){ //invece di riscrivere sta cosa mille volte la rendo una fuinzione SPERANDO che funziona
+    const offsetX = centrato ? (strumentoImmagineCoso.naturalWidth || strumentoImmagineCoso.width) / 2 : 0;
+    const offsetY = centrato ? (strumentoImmagineCoso.naturalHeight || strumentoImmagineCoso.height) / 2 : 0;
+
     if (cliccato) {
-                    if (!lastPos) {
-                        ctx.drawImage(strumentoImmagineCoso, curPos.x, curPos.y);
+                    if (typeof lastPos.x !== "number" || typeof lastPos.y !== "number") {
+                        ctx.drawImage(strumentoImmagineCoso, curPos.x - offsetX, curPos.y - offsetY);
                     } else {
-                        linea(strumentoImmagineCoso, lastPos.x, lastPos.y, curPos.x, curPos.y);
+                        linea(strumentoImmagineCoso, lastPos.x, lastPos.y, curPos.x, curPos.y, offsetX, offsetY);
                         /*
                                         ctx.moveTo(lastPos.x, lastPos.y);
                                         ctx.lineTo(pos.x, pos.y);
@@ -364,12 +415,29 @@ function drawHandler(strumentoImmagineCoso){ //invece di riscrivere sta cosa mil
                     //ultima posizione
                     lastPos.x = curPos.x;
                     lastPos.y = curPos.y;
+                    setModificato(true);
 
 
                 } else {
                     //let pos = getMousePos(canvas, evt);
                     ctx.moveTo(curPos.x, curPos.y);
                 }
+}
+
+function drawMatitaHandler(){
+    if (cliccato) {
+        if (typeof lastPos.x !== "number" || typeof lastPos.y !== "number") {
+            disegnaPixelMatita(curPos.x, curPos.y);
+        } else {
+            lineaMatita(lastPos.x, lastPos.y, curPos.x, curPos.y);
+        }
+
+        lastPos.x = curPos.x;
+        lastPos.y = curPos.y;
+        setModificato(true);
+    } else {
+        ctx.moveTo(curPos.x, curPos.y);
+    }
 }
 
     function update(evt) {
@@ -388,11 +456,11 @@ function drawHandler(strumentoImmagineCoso){ //invece di riscrivere sta cosa mil
 
 
             case "matita":
-            drawHandler(pixel);
+            drawMatitaHandler();
                 break;
 
             case "gomma": //WARNING usare lo stesso sistema degli 
-            drawHandler(gommaImg);
+            drawHandler(gommaImg, true);
 
                break;
 
@@ -670,7 +738,7 @@ function drawHandler(strumentoImmagineCoso){ //invece di riscrivere sta cosa mil
     }
 
     function clickTools() {
-        modificato=true;
+        setModificato(true);
         switch (strumentoSelezionato) {
             case "riempi":
                 riempimi();
